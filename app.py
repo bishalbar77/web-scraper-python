@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request
-import bs4
+from bs4 import BeautifulSoup
 import csv
 import re
 
@@ -53,22 +53,13 @@ def updateProductListHTML():
         with open("new_products_list.csv", "w", encoding="utf8") as csv_write_file:
             writer = csv.DictWriter(csv_write_file, fieldnames=fields)
             writer.writeheader()
-        #     # next(csv_reader)
-        #     for line in reader:
-        #         csv_writer.writerow(line)
             for row in reader:
-                doc = bs4.BeautifulSoup(row['Body (HTML)'], "html.parser")
-                # print(doc.prettify)
-                tags = doc.find(text="Dimension (D x H): ")
-                # span = doc.find('span' ,attrs={'color':'#a59548;'})
-                # tags = doc.find_all(["span"], recursive=True)
-                # tags = doc.find_all(text=re.compile("\:.*"))
-                # print(tags)
+                doc = BeautifulSoup(row['Body (HTML)'], "html.parser")
+                tags = doc.find(text=request.json['column_name'])
                 if tags is not None:
-                    level2Parent = tags.parent.parent
-                    level2Parent.next_sibling = '<span style="color: #000000;">777mm x 777mm</span>'
-                    # print(tags.parent.parent.next_sibling)
-                    print(doc)
+                    level2Parent = tags.parent.parent.next_sibling
+                    level2Parent.clear()
+                    level2Parent.append(request.json['column_value'])
                     row['Body (HTML)'] = doc
                 writer.writerow(row)
     return jsonify({'status' : "Success", 'status_code' : 200, 'message' : "CSV updated successfully!"})
