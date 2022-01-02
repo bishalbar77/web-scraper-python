@@ -55,6 +55,18 @@ def updateProductListHTML():
             writer.writeheader()
             for row in reader:
                 doc = BeautifulSoup(row['Body (HTML)'], "html.parser")
+                # To update Description
+                if request.json['column_name'] == "Description":
+                    pTags = doc.find_all(lambda tag: tag.name == 'p' and not tag.attrs)
+                    # print(pTags)
+                    for span in pTags:
+                        descriptionSpan = span.find(lambda tag: tag.name == 'span' and not tag.attrs)
+                        if descriptionSpan is not None:
+                            descriptionSpan.clear()
+                            descriptionSpan.append(request.json['column_value'])
+                            row['Body (HTML)'] = doc
+
+                # To update Technical Specifications
                 tags = doc.find(text=request.json['column_name'])
                 if tags is not None:
                     level2Parent = tags.parent.parent.next_sibling
