@@ -7,6 +7,7 @@ from flask.json import tag
 
 app = Flask(__name__)
 
+
 @app.route('/')
 def helloWorld():
     return "Flask App Running"
@@ -42,7 +43,7 @@ def updateProductList():
             for row in reader:
                 row[request.json['column_name']] = request.json['column_value']
                 writer.writerow(row)
-    return jsonify({'status' : "Success", 'status_code' : 200, 'message' : "CSV updated successfully!"})
+    return jsonify({'status' : "Success product list updated", 'status_code' : 200, 'message' : "CSV updated successfully!"})
 
 
 @app.route('/updateProductListHTML', methods=['POST'])
@@ -74,7 +75,7 @@ def updateProductListHTML():
                     level2Parent.append(request.json['column_value'])
                     row['Body (HTML)'] = doc
                 writer.writerow(row)
-    return jsonify({'status' : "Success", 'status_code' : 200, 'message' : "CSV updated successfully!"})
+    return jsonify({'status' : "Success product list updated", 'status_code' : 200, 'message' : "CSV updated successfully!"})
 
 if __name__ == "__main__":
     app.run('127.0.0.1', port=5500, debug=True)
